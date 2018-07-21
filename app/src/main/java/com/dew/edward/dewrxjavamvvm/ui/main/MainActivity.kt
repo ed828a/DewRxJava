@@ -148,7 +148,10 @@ class MainActivity : AppCompatActivity() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.trim()?.let {
-                    if (it.isNotEmpty()) fetchVideos(it)
+                    if (it.isNotEmpty()) {
+                        fetchVideos(it)
+                        adapter.resetVideoList()
+                    }
                 }
                 hideKeyboard(this@MainActivity)
                 searchView.clearFocus()

@@ -22,5 +22,5 @@ const val BACKING_STEPS = 5
 const val SYNC_TAG = "Synk"
 const val SYNC_IT = true
 const val DONT_SYNC = false
-const val VISIBLE_THRESHOLD = 5
+const val VISIBLE_THRESHOLD = 10
 const val SCROLL_TO_END = "SCROLL_TO_END"
