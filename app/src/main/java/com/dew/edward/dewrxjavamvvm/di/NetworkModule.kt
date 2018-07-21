@@ -1,17 +1,6 @@
 package com.dew.edward.dewrxjavamvvm.di
 
-import android.content.Context
-import com.dew.edward.dewrxjavamvvm.BuildConfig
-import com.dew.edward.dewrxjavamvvm.data.Network.YoutubeAPI
-import com.facebook.stetho.okhttp3.StethoInterceptor
-import com.jakewharton.picasso.OkHttp3Downloader
-import com.squareup.picasso.Picasso
 import dagger.Module
-import dagger.Provides
-import okhttp3.Cache
-import okhttp3.OkHttpClient
-import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
 
 
 /**

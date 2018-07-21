@@ -2,10 +2,10 @@ package com.dew.edward.dewrxjavamvvm.ui.main
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
-import android.content.SharedPreferences
+import android.content.*
 import android.content.res.Configuration
 import android.os.Bundle
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
@@ -21,6 +21,7 @@ import com.dew.edward.dewrxjavamvvm.model.Outcome
 import com.dew.edward.dewrxjavamvvm.model.QueryData
 import com.dew.edward.dewrxjavamvvm.util.DEFAULT_QUERY
 import com.dew.edward.dewrxjavamvvm.util.KEY_QUERY
+import com.dew.edward.dewrxjavamvvm.util.SCROLL_TO_END
 import com.dew.edward.dewrxjavamvvm.util.hideKeyboard
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -40,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var preferences: SharedPreferences
     private lateinit var query: String
     private lateinit var searchView: SearchView
+    private lateinit var localBroadcastManager: LocalBroadcastManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         (application as App).appComponent.inject(this)
@@ -51,13 +53,21 @@ class MainActivity : AppCompatActivity() {
         preferences = getPreferences(Context.MODE_PRIVATE)
         query = preferences.getString(KEY_QUERY, DEFAULT_QUERY)
 
+        localBroadcastManager = (application as App).localBroadcastManager
+        localBroadcastManager.registerReceiver(scrollToEndMessageReceiver, IntentFilter(SCROLL_TO_END))
+
         initActionBar()
-        initRecyclerView()
+        initRecyclerView(localBroadcastManager)
         initSwipeToRefresh()
         initVideoDataListener()
         fetchVideos(query)
     }
 
+    private val scrollToEndMessageReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            viewModel.listScrolled()
+        }
+    }
     private fun initActionBar(){
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setIcon(R.mipmap.ic_launcher)
@@ -65,8 +75,8 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(true)
     }
 
-    private fun initRecyclerView(){
-        adapter = MainVideoAdapter {
+    private fun initRecyclerView(localBroadcastManager: LocalBroadcastManager){
+        adapter = MainVideoAdapter(localBroadcastManager) {
             Toast.makeText(this, "You clicked ${it.title} ", Toast.LENGTH_SHORT).show()
 //            val intent = Intent(this@MainActivity, ExoVideoPlayActivity::class.java)
 //            intent.putExtra(VIDEO_MODEL, it)
@@ -93,12 +103,16 @@ class MainActivity : AppCompatActivity() {
             when (outcome){
                 is Outcome.Progress -> swipeRefreshLayout.isRefreshing = outcome.loading
                 is Outcome.Success -> {
+                    swipeRefreshLayout.isRefreshing = false
                     if (outcome.data.isNotEmpty()){  // if data is Empty, don't do any thing
                         adapter.setVideoList(outcome.data)
+                    } else {
+                        Toast.makeText(this, "No more result", Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 is Outcome.Failure -> {
+                    swipeRefreshLayout.isRefreshing = false
                     if (outcome.e is IOException)
                         Toast.makeText(this, R.string.need_internet, Toast.LENGTH_SHORT)
                                 .show()
@@ -163,5 +177,10 @@ class MainActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onDestroy() {
+        localBroadcastManager.unregisterReceiver(scrollToEndMessageReceiver)
+        super.onDestroy()
     }
 }

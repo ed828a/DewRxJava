@@ -1,6 +1,7 @@
 package com.dew.edward.dewrxjavamvvm
 
 import android.app.Application
+import android.support.v4.content.LocalBroadcastManager
 import com.dew.edward.dewrxjavamvvm.di.AppComponent
 import com.dew.edward.dewrxjavamvvm.di.AppModule
 import com.dew.edward.dewrxjavamvvm.di.DaggerAppComponent
@@ -14,6 +15,7 @@ import com.facebook.stetho.Stetho
 class App : Application(){
 
     lateinit var appComponent: AppComponent
+    lateinit var localBroadcastManager: LocalBroadcastManager
 
     override fun onCreate() {
         super.onCreate()
@@ -23,6 +25,7 @@ class App : Application(){
 
         initSynk()
         initStetho()
+        localBroadcastManager = LocalBroadcastManager.getInstance(applicationContext)
     }
 
     private fun initSynk() {

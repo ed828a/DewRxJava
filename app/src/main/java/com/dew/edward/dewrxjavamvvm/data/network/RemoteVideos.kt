@@ -1,4 +1,4 @@
-package com.dew.edward.dewrxjavamvvm.data.Network
+package com.dew.edward.dewrxjavamvvm.data.network
 
 import android.util.Log
 import com.dew.edward.dewrxjavamvvm.data.DataContract
@@ -30,6 +30,8 @@ class RemoteVideos @Inject constructor(private val youtubeAPI: YoutubeAPI) : Dat
                 youtubeAPI.searchVideo(query.queryString, resultPageInfo.nextPage)
             }
         }
+
+
 
         return response.flatMap { youtubeResponse ->
             Single.create<List<VideoModel>> { emitter ->

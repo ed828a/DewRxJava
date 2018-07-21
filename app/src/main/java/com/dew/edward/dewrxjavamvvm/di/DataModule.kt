@@ -2,8 +2,8 @@ package com.dew.edward.dewrxjavamvvm.di
 
 import android.content.Context
 import com.dew.edward.dewrxjavamvvm.data.DataContract
-import com.dew.edward.dewrxjavamvvm.data.Network.RemoteVideos
-import com.dew.edward.dewrxjavamvvm.data.Network.YoutubeAPI
+import com.dew.edward.dewrxjavamvvm.data.network.RemoteVideos
+import com.dew.edward.dewrxjavamvvm.data.network.YoutubeAPI
 import com.dew.edward.dewrxjavamvvm.data.local.LocalCacheVideos
 import com.dew.edward.dewrxjavamvvm.data.local.VideosDb
 import com.dew.edward.dewrxjavamvvm.data.repository.AppScheduler

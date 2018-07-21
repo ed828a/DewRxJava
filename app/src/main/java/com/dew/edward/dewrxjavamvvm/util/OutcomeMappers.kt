@@ -16,7 +16,8 @@ import io.reactivex.subjects.PublishSubject
  **/
 fun <T> PublishSubject<T>.toLiveData(compositeDisposable: CompositeDisposable): LiveData<T> {
     val data = MutableLiveData<T>()
-    compositeDisposable.add(this.subscribe { t: T -> data.value = t })
+    // using post for running on background thread
+    compositeDisposable.add(this.subscribe { t: T -> data.postValue(t) })
     return data
 }
 

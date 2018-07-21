@@ -35,11 +35,28 @@ fun <T> Flowable<T>.performOnBackOutOnMain(scheduler: Scheduler): Flowable<T> {
 }
 
 /**
+ * Extension function to subscribe on the background thread and observe on the background thread for a [Flowable]
+ * */
+fun <T> Flowable<T>.performOnBackOutOnBack(scheduler: Scheduler): Flowable<T> {
+    return this.subscribeOn(scheduler.io())
+            .observeOn(scheduler.io())
+}
+
+/**
  * Extension function to subscribe on the background thread and observe on the main thread  for a [Single]
  * */
 fun <T> Single<T>.performOnBackOutOnMain(scheduler: Scheduler): Single<T> {
     return this.subscribeOn(scheduler.io())
             .observeOn(scheduler.mainThread())
+}
+
+
+/**
+ * Extension function to subscribe on the background thread and observe on the background thread for a [Flowable]
+ * */
+fun <T> Single<T>.performOnBackOutOnBack(scheduler: Scheduler): Single<T> {
+    return this.subscribeOn(scheduler.io())
+            .observeOn(scheduler.io())
 }
 
 /**
@@ -49,6 +66,8 @@ fun <T> Observable<T>.performOnBackOutOnMain(scheduler: Scheduler): Observable<T
     return this.subscribeOn(scheduler.io())
             .observeOn(scheduler.mainThread())
 }
+
+
 
 /**
  * Extension function to add a Disposable to a CompositeDisposable

@@ -7,6 +7,7 @@ import com.dew.edward.dewrxjavamvvm.model.QueryData
 import com.dew.edward.dewrxjavamvvm.model.VideoModel
 import com.dew.edward.dewrxjavamvvm.util.*
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -34,35 +35,36 @@ class VideoRepository @Inject constructor(
         videoFetchOutcome.loading(true)
         // Observe changes to the Db
         if (query.isInitializer) {
-            remoteFetch(query)
+//            remoteFetch(query)
             queryStub?.isInitializer = false
         } else {
-            local.getVideos()
-                    .performOnBackOutOnMain(scheduler)
-                    .doAfterNext {
-                        if (Sync.shouldSync(SyncKeys.INIT_QUERY, 2, TimeUnit.HOURS) ||
-                                Sync.shouldSync(SyncKeys.INIT_QUERY, 2, TimeUnit.HOURS))
-                            refreshVideos()
-                    }
-                    .subscribe(
-                            { videoList ->
-                                if (videoList.isNotEmpty()) {
-                                    videoFetchOutcome.success(videoList)
-                                } else {
-                                    remoteFetch(query)
-                                }
-                            },
-                            { error -> handleVideoError(error) }
-                    )
-                    .addTo(compositeDisposable)
+//            local.getVideos()
+//                    .performOnBackOutOnMain(scheduler)
+//                    .doAfterNext {
+//                        if (Sync.shouldSync(SyncKeys.INIT_QUERY, 2, TimeUnit.HOURS) ||
+//                                Sync.shouldSync(SyncKeys.INIT_QUERY, 2, TimeUnit.HOURS))
+//                            refreshVideos()
+//                    }
+//                    .subscribe(
+//                            { videoList ->
+//                                if (videoList.isNotEmpty()) {
+//                                    videoFetchOutcome.success(videoList)
+//                                } else {
+//                                    remoteFetch(query)
+//                                }
+//                            },
+//                            { error -> handleVideoError(error) }
+//                    )
+//                    .addTo(compositeDisposable)
         }
-
+        remoteFetch(query)
     }
 
     private fun remoteFetch(query: QueryData) {
         videoFetchOutcome.loading(true)
 
         remote.getVideos(query)
+//                .performOnBackOutOnBack(scheduler)
                 .performOnBackOutOnMain(scheduler)
                 .doAfterSuccess { videoList ->
                     if (videoList.isNotEmpty()) {
@@ -72,7 +74,7 @@ class VideoRepository @Inject constructor(
                 }
                 .updateSyncStatus(key = SyncKeys.INIT_QUERY)
                 .subscribe({ videoList ->
-//                    Log.d(TAG, "remote.getVideos subscribe success: videoList = ${videoList?.toString()}")
+                    Log.d(TAG, "remote.getVideos subscribe success: videoList count = ${videoList?.count()}")
 
                     videoFetchOutcome.success(videoList)
                 }, { error -> handleVideoError(error) })

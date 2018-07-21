@@ -1,4 +1,4 @@
-package com.dew.edward.dewrxjavamvvm.data.Network
+package com.dew.edward.dewrxjavamvvm.data.network
 
 import android.util.Log
 import com.dew.edward.dewrxjavamvvm.model.YoutubeResponse

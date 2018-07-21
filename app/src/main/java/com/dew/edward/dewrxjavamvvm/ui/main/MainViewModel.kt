@@ -6,6 +6,7 @@ import com.dew.edward.dewrxjavamvvm.data.DataContract
 import com.dew.edward.dewrxjavamvvm.model.Outcome
 import com.dew.edward.dewrxjavamvvm.model.QueryData
 import com.dew.edward.dewrxjavamvvm.model.VideoModel
+import com.dew.edward.dewrxjavamvvm.util.VISIBLE_THRESHOLD
 import com.dew.edward.dewrxjavamvvm.util.toLiveData
 import io.reactivex.disposables.CompositeDisposable
 
@@ -15,11 +16,14 @@ import io.reactivex.disposables.CompositeDisposable
  */
 class MainViewModel (private val repo: DataContract.Repository,
                      private val compositeDisposable: CompositeDisposable) : ViewModel(){
+    var lastQueryData: QueryData? = null
+
     val videosOutcome: LiveData<Outcome<List<VideoModel>>> by lazy {
         repo.videoFetchOutcome.toLiveData(compositeDisposable)
     }
 
     fun getVideos(queryData: QueryData) {
+        lastQueryData = queryData
         if (videosOutcome.value == null)
             repo.fetchVideos(queryData)
     }
@@ -28,9 +32,21 @@ class MainViewModel (private val repo: DataContract.Repository,
         repo.refreshVideos()
     }
 
+    fun listScrolled(
+//            visibleItemCount: Int,
+//            lastVisibleItemPosition: Int,
+//            totalItemCount: Int
+    ){
+//        if (visibleItemCount + lastVisibleItemPosition + VISIBLE_THRESHOLD >= totalItemCount){
+            if (lastQueryData != null) {
+                lastQueryData?.isInitializer = false
+                repo.fetchVideos(lastQueryData!!)
+            }
+//        }
+    }
+
     override fun onCleared() {
         compositeDisposable.clear()
-        // PostDH.destroyListComponent()
 
         super.onCleared()
     }
