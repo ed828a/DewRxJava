@@ -36,7 +36,6 @@ class RemoteVideos @Inject constructor(private val youtubeAPI: YoutubeAPI) : Dat
         return response.flatMap { youtubeResponse ->
             Single.create<List<VideoModel>> { emitter ->
                 with(resultPageInfo) {
-
                     prevPage = youtubeResponse.prevPageToken ?: ""
                     nextPage = youtubeResponse.nextPageToken ?: ""
                     totalResults = youtubeResponse.pageInfo.totalResults ?: "0"

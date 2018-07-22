@@ -1,6 +1,7 @@
 package com.dew.edward.dewrxjavamvvm.di
 
 import com.dew.edward.dewrxjavamvvm.ui.main.MainActivity
+import com.dew.edward.dewrxjavamvvm.ui.play.VideoPlayActivity
 import dagger.Component
 import javax.inject.Singleton
 
@@ -14,4 +15,5 @@ import javax.inject.Singleton
 interface AppComponent {
 
     fun inject(target: MainActivity)
+    fun inject(target: VideoPlayActivity)
 }

@@ -15,7 +15,10 @@ import com.facebook.stetho.Stetho
 class App : Application(){
 
     lateinit var appComponent: AppComponent
-    lateinit var localBroadcastManager: LocalBroadcastManager
+    companion object {
+        lateinit var localBroadcastManager: LocalBroadcastManager
+    }
+
 
     override fun onCreate() {
         super.onCreate()

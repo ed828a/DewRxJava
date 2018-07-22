@@ -24,20 +24,21 @@ class VideoRepository @Inject constructor(
 ) : DataContract.Repository {
     private val TAG = javaClass.simpleName
 
-    private var queryStub: QueryData? = null
+    private var refreshQuery: QueryData? = null
 
     override val videoFetchOutcome: PublishSubject<Outcome<List<VideoModel>>> =
             PublishSubject.create<Outcome<List<VideoModel>>>()
 
 
     override fun fetchVideos(query: QueryData) {
-        queryStub = query
+        Log.d("VideoRepository", "fetchVideos() QueryData: $query")
+        refreshQuery = QueryData(query.queryString, query.type, isInitializer = false)
         videoFetchOutcome.loading(true)
         // Observe changes to the Db
-        if (query.isInitializer) {
+//        if (query.isInitializer) {
 //            remoteFetch(query)
-            queryStub?.isInitializer = false
-        } else {
+//            queryStub?.isInitializer = false
+//        } else {
 //            local.getVideos()
 //                    .performOnBackOutOnMain(scheduler)
 //                    .doAfterNext {
@@ -56,11 +57,12 @@ class VideoRepository @Inject constructor(
 //                            { error -> handleVideoError(error) }
 //                    )
 //                    .addTo(compositeDisposable)
-        }
+//        }
         remoteFetch(query)
     }
 
     private fun remoteFetch(query: QueryData) {
+        Log.d("VideoRepository", "remoteFetch(): QueryData: $query")
         videoFetchOutcome.loading(true)
 
         remote.getVideos(query)
@@ -75,7 +77,7 @@ class VideoRepository @Inject constructor(
                 .updateSyncStatus(key = SyncKeys.INIT_QUERY)
                 .subscribe({ videoList ->
                     Log.d(TAG, "remote.getVideos subscribe success: videoList count = ${videoList?.count()}")
-
+                    Log.d(TAG, "remote.getVideos subscribe success: videoList = ${videoList}")
                     videoFetchOutcome.success(videoList)
                 }, { error -> handleVideoError(error) })
                 .addTo(compositeDisposable)
@@ -83,8 +85,8 @@ class VideoRepository @Inject constructor(
 
 
     override fun refreshVideos() {
-        if (queryStub != null) {
-            remoteFetch(queryStub!!)
+        if (refreshQuery != null) {
+            remoteFetch(refreshQuery!!)
         }
     }
 

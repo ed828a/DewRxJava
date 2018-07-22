@@ -2,6 +2,7 @@ package com.dew.edward.dewrxjavamvvm.ui.main
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
+import android.util.Log
 import com.dew.edward.dewrxjavamvvm.data.DataContract
 import com.dew.edward.dewrxjavamvvm.model.Outcome
 import com.dew.edward.dewrxjavamvvm.model.QueryData
@@ -16,6 +17,8 @@ import io.reactivex.disposables.CompositeDisposable
  */
 class MainViewModel(private val repo: DataContract.Repository,
                     private val compositeDisposable: CompositeDisposable) : ViewModel() {
+    private val TAG = javaClass.simpleName
+
     private var lastQueryData: QueryData? = null
 
     val videosOutcome: LiveData<Outcome<List<VideoModel>>> by lazy {
@@ -23,9 +26,10 @@ class MainViewModel(private val repo: DataContract.Repository,
     }
 
     fun getVideos(queryData: QueryData) {
-        lastQueryData = queryData
-        if (videosOutcome.value == null)
-            repo.fetchVideos(queryData)
+        Log.d(TAG, "getVideos: queryData = $queryData")
+        lastQueryData = QueryData(queryData.queryString, queryData.type, queryData.isInitializer)
+        Log.d(TAG, "getVideos: lastQueryData = $lastQueryData")
+        repo.fetchVideos(queryData)
     }
 
     fun refreshVideos() {
@@ -33,8 +37,10 @@ class MainViewModel(private val repo: DataContract.Repository,
     }
 
     fun listScrolled() {
+        Log.d(TAG, "listScrolled: out side of if, lastQueryData = $lastQueryData")
         if (lastQueryData != null) {
             lastQueryData?.isInitializer = false
+            Log.d(TAG, "listScrolled: lastQueryData = $lastQueryData")
             repo.fetchVideos(lastQueryData!!)
         }
     }

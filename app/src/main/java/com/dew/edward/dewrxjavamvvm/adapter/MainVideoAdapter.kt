@@ -1,14 +1,15 @@
 package com.dew.edward.dewrxjavamvvm.adapter
 
 import android.content.Intent
-import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.dew.edward.dewrxjavamvvm.App.Companion.localBroadcastManager
 import com.dew.edward.dewrxjavamvvm.R
 import com.dew.edward.dewrxjavamvvm.model.VideoModel
+import com.dew.edward.dewrxjavamvvm.ui.main.MainViewModel
 import com.dew.edward.dewrxjavamvvm.util.SCROLL_TO_END
 import com.dew.edward.dewrxjavamvvm.util.VISIBLE_THRESHOLD
 import com.squareup.picasso.Picasso
@@ -19,7 +20,7 @@ import kotlinx.android.synthetic.main.cell_video.view.*
  * Created by Edward on 7/21/2018.
  */
 class MainVideoAdapter(
-        private val localBroadcastManager: LocalBroadcastManager,
+        val viewModel: MainViewModel,
         val function: (VideoModel) -> Unit
 ) : RecyclerView.Adapter<MainVideoAdapter.MainViewHolder>() {
 
@@ -37,7 +38,8 @@ class MainVideoAdapter(
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         holder.bind(videoList[position])
         if (position == itemCount - VISIBLE_THRESHOLD) {
-            localBroadcastManager.sendBroadcast(Intent(SCROLL_TO_END))
+            viewModel.listScrolled()
+//            localBroadcastManager.sendBroadcast(Intent(SCROLL_TO_END))
             Log.d("MainVideoAdapter", "onBindViewHolder, remote itemCount = $itemCount")
         }
     }
@@ -64,7 +66,9 @@ class MainVideoAdapter(
             dateView.text = video.date
             Picasso.with(itemView.context).load(video.thumbnail).into(thumbnailView)
 
-            itemView.setOnClickListener { function(video) }
+            itemView.setOnClickListener {
+                function(video)
+            }
         }
     }
 }

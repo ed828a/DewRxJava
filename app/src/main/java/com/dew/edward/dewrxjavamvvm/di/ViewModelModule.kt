@@ -5,6 +5,7 @@ import com.dew.edward.dewrxjavamvvm.ui.main.MainViewModelFactory
 import dagger.Module
 import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
+import javax.inject.Singleton
 
 
 /**
@@ -13,6 +14,7 @@ import io.reactivex.disposables.CompositeDisposable
 @Module
 class ViewModelModule {
 
+    @Singleton
     @Provides
     fun provideMainViewModelFactory(
             repository: DataContract.Repository,
